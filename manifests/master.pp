@@ -3,7 +3,9 @@ include postgresql::params
 class postgresql::master (
   $package_name=$postgresql::params::package_name,
   $service_name=$postgresql::params::service_name,
-  $listen_addresses='*'
+  $listen_addresses='*',
+  $replication_user="replicator",
+  $replication_password="thepassword"
 ) inherits postgresql::params {
   package {
     $package_name:
@@ -29,7 +31,7 @@ class postgresql::master (
   }
 
   postgresql::role {
-    "replicator":
-      attributes => "REPLICATION LOGIN ENCRYPTED PASSWORD 'thepassword'";
+    $replication_user:
+      attributes => "REPLICATION LOGIN ENCRYPTED PASSWORD '${replication_password}'";
   }
 }
